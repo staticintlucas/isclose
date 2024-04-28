@@ -1,0 +1,18 @@
+[package]
+name = "isclose"
+version = "0.1.0"
+authors = ["Lucas Jansen"]
+edition = "2018"
+rust-version = "1.46"
+description = "A collection of trait and macros for comparing approximate equality"
+repository = "https://github.com/staticintlucas/isclose"
+license = "MIT OR Apache-2.0"
+keywords = ["float", "equal", "isclose", "is_close", "approximate"]
+categories = ["command-line-utilities", "graphics", "multimedia::images", "rendering"]
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+half = { version = "2", default-features = false, optional = true }
