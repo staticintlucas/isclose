@@ -45,6 +45,7 @@ where
     }
 }
 
+/// Assert that two values are approximately equal
 #[macro_export]
 macro_rules! assert_is_close {
     ($lhs:expr, $rhs:expr $(,)?) => {
@@ -76,6 +77,8 @@ macro_rules! assert_is_close {
     };
 }
 
+/// Assert that two values are approximately equal using the given relative
+/// tolerance
 #[macro_export]
 macro_rules! assert_is_close_rel_tol {
     ($lhs:expr, $rhs:expr, $rel_tol:expr $(,)?) => {
@@ -107,6 +110,8 @@ macro_rules! assert_is_close_rel_tol {
     };
 }
 
+/// Assert that two values are approximately equal using the given absolute
+/// tolerance
 #[macro_export]
 macro_rules! assert_is_close_abs_tol {
     ($lhs:expr, $rhs:expr, $abs_tol:expr $(,)?) => {
@@ -138,6 +143,8 @@ macro_rules! assert_is_close_abs_tol {
     };
 }
 
+/// Assert that two values are approximately equal using the given relative and
+/// absolute tolerances
 #[macro_export]
 macro_rules! assert_is_close_tol {
     ($lhs:expr, $rhs:expr, $rel_tol:expr, $abs_tol:expr $(,)?) => {
