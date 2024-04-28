@@ -5,8 +5,8 @@
 //!
 //! Additional implementations are also hidden behind the following features:
 //!
-//! - `half` implements [`IsClose`] for [`half::f16`] and [`half::bf16`]
-//! - `euclid` implements [`IsClose`] for euclid's geometric types
+//! - `half` implements [`IsClose`] for [`f16`][::half::f16] and [`bf16`][::half::bf16]
+//! - `euclid` implements [`IsClose`] for [euclid]'s geometric types
 //!
 //! ## Usage:
 //!
@@ -41,6 +41,9 @@ pub mod macros;
 
 #[cfg(feature = "half")]
 mod half;
+
+#[cfg(feature = "euclid")]
+mod euclid;
 
 use core::borrow::Borrow;
 
