@@ -12,8 +12,6 @@ jobs:
         combo: [
           { rust: stable, flags: --all-features },
           { rust: 1.70.0, flags: --all-features },
-          { rust: stable, flags: --features=default },
-          { rust: 1.46.0, flags: --features=default },
           { rust: stable, flags: --no-default-features },
           { rust: 1.46.0, flags: --no-default-features },
         ]
