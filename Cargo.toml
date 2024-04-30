@@ -11,12 +11,10 @@ keywords = ["float", "equal", "isclose", "is_close", "approximate"]
 categories = ["command-line-utilities", "graphics", "multimedia::images", "rendering"]
 
 [features]
-default = ["std"]
-std = []
 
 [dependencies]
 half = { version = "2", default-features = false, optional = true }
-euclid = { version = "0.22", default-features = false, features = ["libm"], optional = true }
+euclid = { version = "0.22", default-features = false, features = ["std"], optional = true }
 
 [package.metadata.docs.rs]
 all-features = true
