@@ -54,32 +54,32 @@ trait Abs {
 
 #[cfg(feature = "std")]
 mod abs {
-impl crate::Abs for f32 {
-    fn abs(self) -> Self {
-        Self::abs(self)
+    impl crate::Abs for f32 {
+        fn abs(self) -> Self {
+            Self::abs(self)
+        }
     }
-}
 
-impl crate::Abs for f64 {
-    fn abs(self) -> Self {
-        Self::abs(self)
+    impl crate::Abs for f64 {
+        fn abs(self) -> Self {
+            Self::abs(self)
+        }
     }
-}
 }
 
 #[cfg(all(not(feature = "std"), feature = "libm"))]
 mod abs {
-impl crate::Abs for f32 {
-    fn abs(self) -> Self {
-        libm::fabsf(self)
+    impl crate::Abs for f32 {
+        fn abs(self) -> Self {
+            libm::fabsf(self)
+        }
     }
-}
 
-impl crate::Abs for f64 {
-    fn abs(self) -> Self {
-        libm::fabs(self)
+    impl crate::Abs for f64 {
+        fn abs(self) -> Self {
+            libm::fabs(self)
+        }
     }
-}
 }
 
 /// Trait used to return a generic zero value for the tolerance
