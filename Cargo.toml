@@ -11,10 +11,16 @@ keywords = ["float", "equal", "isclose", "is_close", "approximate"]
 categories = ["command-line-utilities", "graphics", "multimedia::images", "rendering"]
 
 [features]
+default = ["std"]
+std = ["euclid?/std"]
+libm = ["dep:libm", "euclid?/libm"]
+half = ["dep:half"]
+euclid = ["dep:euclid"]
 
 [dependencies]
-half = { version = "2", default-features = false, optional = true }
-euclid = { version = "0.22", default-features = false, features = ["std"], optional = true }
+euclid = { version = "0.22", default-features = false, optional = true }
+half = { version = "2", default-features = false, features = ["num-traits"], optional= true }
+libm = { version = "0.2", optional = true }
 
 [package.metadata.docs.rs]
 all-features = true

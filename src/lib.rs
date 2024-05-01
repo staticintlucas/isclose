@@ -52,30 +52,34 @@ trait Abs {
     fn abs(self) -> Self;
 }
 
-impl Abs for f32 {
+#[cfg(feature = "std")]
+mod abs {
+impl crate::Abs for f32 {
     fn abs(self) -> Self {
-        #[cfg(feature = "std")]
-        {
-            Self::abs(self)
-        }
-        #[cfg(not(feature = "std"))]
-        {
-            Self::from_bits(self.to_bits() & 0x7fff_ffff)
-        }
+        Self::abs(self)
     }
 }
 
-impl Abs for f64 {
+impl crate::Abs for f64 {
     fn abs(self) -> Self {
-        #[cfg(feature = "std")]
-        {
-            Self::abs(self)
-        }
-        #[cfg(not(feature = "std"))]
-        {
-            Self::from_bits(self.to_bits() & 0x7fff_ffff_ffff_ffff)
-        }
+        Self::abs(self)
     }
+}
+}
+
+#[cfg(all(not(feature = "std"), feature = "libm"))]
+mod abs {
+impl crate::Abs for f32 {
+    fn abs(self) -> Self {
+        libm::fabsf(self)
+    }
+}
+
+impl crate::Abs for f64 {
+    fn abs(self) -> Self {
+        libm::fabs(self)
+    }
+}
 }
 
 /// Trait used to return a generic zero value for the tolerance
@@ -148,8 +152,8 @@ impl IsClose for f32 {
         abs_tol: impl Borrow<Self>,
     ) -> bool {
         let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        let tol = Self::max(Abs::abs(*self), Abs::abs(*self)) * rel_tol + abs_tol;
-        Abs::abs(*self - *other) <= tol
+        let tol = Self::max(self.abs(), other.abs()) * rel_tol + abs_tol;
+        (*self - *other).abs() <= tol
     }
 }
 
@@ -169,8 +173,8 @@ impl IsClose for f64 {
         abs_tol: impl Borrow<Self>,
     ) -> bool {
         let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        let tol = Self::max(Abs::abs(*self), Abs::abs(*self)) * rel_tol + abs_tol;
-        Abs::abs(*self - *other) <= tol
+        let tol = Self::max(self.abs(), other.abs()) * rel_tol + abs_tol;
+        (*self - *other).abs() <= tol
     }
 }
 

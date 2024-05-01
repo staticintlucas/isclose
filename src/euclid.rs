@@ -13,6 +13,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -32,6 +33,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -52,6 +54,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -72,6 +75,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -94,6 +98,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -113,6 +118,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -133,6 +139,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -154,6 +161,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -174,6 +182,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -197,6 +206,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -216,6 +226,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -238,6 +249,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -257,6 +269,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -279,6 +292,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -299,6 +313,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -320,6 +335,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -344,6 +360,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -378,6 +395,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -398,6 +416,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -419,6 +438,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
@@ -439,6 +459,7 @@ where
     const ABS_TOL: T = T::ABS_TOL;
     const REL_TOL: T = T::REL_TOL;
 
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl core::borrow::Borrow<Self>,
