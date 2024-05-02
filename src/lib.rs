@@ -11,7 +11,7 @@
 //! ## Usage:
 //!
 //! ```
-//! # use isclose::{IsClose, assert_is_close};
+//! use isclose::{IsClose, assert_is_close};
 //!
 //! // This will fail!
 //! // assert_eq!(0.1 + 0.2, 0.3)
@@ -21,6 +21,45 @@
 //!
 //! // Equivalent, but gives better error messages
 //! assert_is_close!(0.1 + 0.2, 0.3);
+//! ```
+//!
+//! You can also implement [`IsClose`] for custom types
+//!
+//! ```
+//! use isclose::{IsClose, assert_is_close};
+//! use std::borrow::Borrow;
+//!
+//! #[derive(Debug)]
+//! struct Vector { x: f32, y: f32 }
+//!
+//! impl IsClose<f32> for Vector {
+//!     // Use the same default tolerances as f32
+//!     // You can override the defaults here if necessary
+//!     const ABS_TOL: f32 = <f32 as IsClose>::ABS_TOL;
+//!     const REL_TOL: f32 = <f32 as IsClose>::REL_TOL;
+//!
+//!     fn is_close_tol(
+//!         &self,
+//!         other: impl Borrow<Self>,
+//!         rel_tol: impl Borrow<f32>,
+//!         abs_tol: impl Borrow<f32>,
+//!     ) -> bool {
+//!         let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
+//!         self.x.is_close_tol(other.x, rel_tol, abs_tol) &&
+//!             self.y.is_close_tol(other.y, rel_tol, abs_tol)
+//!     }
+//! }
+//!
+//! assert_is_close!(
+//!     Vector {
+//!         x: 0.1 + 0.2,
+//!         y: 0.2 + 0.4,
+//!     },
+//!     Vector {
+//!         x: 0.3,
+//!         y: 0.6,
+//!     }
+//! )
 //! ```
 #![warn(
     missing_docs,
