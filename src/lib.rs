@@ -88,20 +88,20 @@ use core::borrow::Borrow;
 
 /// Utility crate since floats don't implement [`f32::abs`] in `no_std`
 trait Abs {
-    fn abs(self) -> Self;
+    fn abs(&self) -> Self;
 }
 
 #[cfg(feature = "std")]
 mod abs {
     impl crate::Abs for f32 {
-        fn abs(self) -> Self {
-            Self::abs(self)
+        fn abs(&self) -> Self {
+            Self::abs(*self)
         }
     }
 
     impl crate::Abs for f64 {
-        fn abs(self) -> Self {
-            Self::abs(self)
+        fn abs(&self) -> Self {
+            Self::abs(*self)
         }
     }
 }
@@ -109,14 +109,14 @@ mod abs {
 #[cfg(all(not(feature = "std"), feature = "libm"))]
 mod abs {
     impl crate::Abs for f32 {
-        fn abs(self) -> Self {
-            libm::fabsf(self)
+        fn abs(&self) -> Self {
+            libm::fabsf(*self)
         }
     }
 
     impl crate::Abs for f64 {
-        fn abs(self) -> Self {
-            libm::fabs(self)
+        fn abs(&self) -> Self {
+            libm::fabs(*self)
         }
     }
 }
@@ -191,7 +191,7 @@ impl IsClose for f32 {
         abs_tol: impl Borrow<Self>,
     ) -> bool {
         let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        let tol = Self::max(self.abs(), other.abs()) * rel_tol + abs_tol;
+        let tol = Self::max(Abs::abs(self), Abs::abs(other)) * rel_tol + abs_tol;
         (*self - *other).abs() <= tol
     }
 }
@@ -212,7 +212,7 @@ impl IsClose for f64 {
         abs_tol: impl Borrow<Self>,
     ) -> bool {
         let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        let tol = Self::max(self.abs(), other.abs()) * rel_tol + abs_tol;
+        let tol = Self::max(Abs::abs(self), Abs::abs(other)) * rel_tol + abs_tol;
         (*self - *other).abs() <= tol
     }
 }
