@@ -1,6 +1,6 @@
 [package]
 name = "isclose"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Lucas Jansen"]
 edition = "2018"
 rust-version = "1.60"
@@ -9,6 +9,9 @@ repository = "https://github.com/staticintlucas/isclose"
 license = "MIT OR Apache-2.0"
 keywords = ["float", "equal", "isclose", "is_close", "approximate"]
 categories = ["mathematics", "no-std", "rust-patterns"]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [features]
 default = ["std"]
@@ -21,6 +24,3 @@ euclid = ["dep:euclid"]
 euclid = { version = "0.22", default-features = false, optional = true }
 half = { version = "2", default-features = false, features = ["num-traits"], optional= true }
 libm = { version = "0.2", optional = true }
-
-[package.metadata.docs.rs]
-all-features = true
