@@ -2,7 +2,7 @@
 
 [test status]: https://img.shields.io/github/actions/workflow/status/staticintlucas/isclose/test.yml?branch=main&label=tests&style=flat-square
 [crate version]: https://img.shields.io/crates/v/isclose?style=flat-square
-[rust version]: https://img.shields.io/badge/rust-1.60%2B-informational?style=flat-square
+[rust version]: https://img.shields.io/crates/msrv/isclose?style=flat-square
 
 [actions]: https://github.com/staticintlucas/isclose/actions?query=branch%3Amain
 [crates]: https://crates.io/crates/isclose
