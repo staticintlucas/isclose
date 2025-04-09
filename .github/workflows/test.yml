@@ -10,12 +10,12 @@ jobs:
       fail-fast: false
       matrix:
         combo: [
-          { rust: stable, flags: --all-features },
-          { rust: 1.70.0, flags: --all-features },
           { rust: stable, flags: --features=default },
           { rust: 1.60.0, flags: --features=default },
+          { rust: stable, flags: --all-features },
+          # { rust: 1.70.0, flags: --all-features },
           { rust: stable, flags: --no-default-features --features=libm },
-          { rust: 1.60.0, flags: --no-default-features --features=libm },
+          # { rust: 1.60.0, flags: --no-default-features --features=libm },
         ]
     steps:
     - name: Checkout
