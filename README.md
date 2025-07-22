@@ -11,16 +11,13 @@
 
 This crate provides a set of traits and macros for comparing arbitrary types.
 
-The trait [`IsClose`] is implemented by default for [`f32`] and [`f64`].
+The trait `IsClose` is implemented by default for `f32` and `f64`.
 
 Additional implementations are also hidden behind the following features:
 
-- `half` implements [`IsClose`] for [half]'s `f16` and `bf16`
-- `euclid` implements [`IsClose`] for [euclid]'s geometric types
+- `half` implements `IsClose` for [half]'s `f16` and `bf16`
+- `euclid` implements `IsClose` for [euclid]'s geometric types
 
-[`IsClose`]: https://docs.rs/isclose/latest/isclose/trait.IsClose.html
-[`f32`]: https://doc.rust-lang.org/stable/std/f32/
-[`f64`]: https://doc.rust-lang.org/stable/std/f64/
 [half]: https://crates.io/crates/half
 [euclid]: https://crates.io/crates/euclid
 
