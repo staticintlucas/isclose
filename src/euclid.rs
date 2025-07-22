@@ -14,15 +14,8 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.radians.is_close_tol(&other.radians, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.radians.is_close_impl(&other.radians, rel_tol, abs_tol)
     }
 }
 
@@ -34,16 +27,9 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.min.is_close_tol(&other.min, rel_tol, abs_tol)
-            && self.max.is_close_tol(&other.max, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.min.is_close_impl(&other.min, rel_tol, abs_tol)
+            && self.max.is_close_impl(&other.max, rel_tol, abs_tol)
     }
 }
 
@@ -55,16 +41,9 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.min.is_close_tol(&other.min, rel_tol, abs_tol)
-            && self.max.is_close_tol(&other.max, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.min.is_close_impl(&other.min, rel_tol, abs_tol)
+            && self.max.is_close_impl(&other.max, rel_tol, abs_tol)
     }
 }
 
@@ -76,18 +55,11 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.x.is_close_tol(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_tol(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_tol(&other.z, rel_tol, abs_tol)
-            && self.w.is_close_tol(&other.w, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
+            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
+            && self.w.is_close_impl(&other.w, rel_tol, abs_tol)
     }
 }
 
@@ -99,15 +71,8 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.0.is_close_tol(&other.0, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.0.is_close_impl(&other.0, rel_tol, abs_tol)
     }
 }
 
@@ -119,16 +84,9 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.x.is_close_tol(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_tol(&other.y, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
+            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
     }
 }
 
@@ -140,17 +98,10 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.x.is_close_tol(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_tol(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_tol(&other.z, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
+            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
     }
 }
 
@@ -162,16 +113,9 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.origin.is_close_tol(&other.origin, rel_tol, abs_tol)
-            && self.size.is_close_tol(&other.size, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.origin.is_close_impl(&other.origin, rel_tol, abs_tol)
+            && self.size.is_close_impl(&other.size, rel_tol, abs_tol)
     }
 }
 
@@ -183,19 +127,12 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
         self.rotation
-            .is_close_tol(&other.rotation, rel_tol, abs_tol)
+            .is_close_impl(&other.rotation, rel_tol, abs_tol)
             && self
                 .translation
-                .is_close_tol(&other.translation, rel_tol, abs_tol)
+                .is_close_impl(&other.translation, rel_tol, abs_tol)
     }
 }
 
@@ -207,15 +144,8 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.angle.is_close_tol(&other.angle, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.angle.is_close_impl(&other.angle, rel_tol, abs_tol)
     }
 }
 
@@ -227,18 +157,11 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.i.is_close_tol(&other.i, rel_tol, abs_tol)
-            && self.j.is_close_tol(&other.j, rel_tol, abs_tol)
-            && self.k.is_close_tol(&other.k, rel_tol, abs_tol)
-            && self.r.is_close_tol(&other.r, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.i.is_close_impl(&other.i, rel_tol, abs_tol)
+            && self.j.is_close_impl(&other.j, rel_tol, abs_tol)
+            && self.k.is_close_impl(&other.k, rel_tol, abs_tol)
+            && self.r.is_close_impl(&other.r, rel_tol, abs_tol)
     }
 }
 
@@ -250,15 +173,8 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.0.is_close_tol(&other.0, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.0.is_close_impl(&other.0, rel_tol, abs_tol)
     }
 }
 
@@ -270,18 +186,11 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.top.is_close_tol(&other.top, rel_tol, abs_tol)
-            && self.right.is_close_tol(&other.right, rel_tol, abs_tol)
-            && self.bottom.is_close_tol(&other.bottom, rel_tol, abs_tol)
-            && self.left.is_close_tol(&other.left, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.top.is_close_impl(&other.top, rel_tol, abs_tol)
+            && self.right.is_close_impl(&other.right, rel_tol, abs_tol)
+            && self.bottom.is_close_impl(&other.bottom, rel_tol, abs_tol)
+            && self.left.is_close_impl(&other.left, rel_tol, abs_tol)
     }
 }
 
@@ -293,16 +202,9 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.width.is_close_tol(&other.width, rel_tol, abs_tol)
-            && self.height.is_close_tol(&other.height, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.width.is_close_impl(&other.width, rel_tol, abs_tol)
+            && self.height.is_close_impl(&other.height, rel_tol, abs_tol)
     }
 }
 
@@ -314,17 +216,10 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.width.is_close_tol(&other.width, rel_tol, abs_tol)
-            && self.height.is_close_tol(&other.height, rel_tol, abs_tol)
-            && self.depth.is_close_tol(&other.depth, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.width.is_close_impl(&other.width, rel_tol, abs_tol)
+            && self.height.is_close_impl(&other.height, rel_tol, abs_tol)
+            && self.depth.is_close_impl(&other.depth, rel_tol, abs_tol)
     }
 }
 
@@ -336,20 +231,13 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.m11.is_close_tol(&other.m11, rel_tol, abs_tol)
-            && self.m12.is_close_tol(&other.m12, rel_tol, abs_tol)
-            && self.m21.is_close_tol(&other.m21, rel_tol, abs_tol)
-            && self.m22.is_close_tol(&other.m22, rel_tol, abs_tol)
-            && self.m31.is_close_tol(&other.m31, rel_tol, abs_tol)
-            && self.m32.is_close_tol(&other.m32, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.m11.is_close_impl(&other.m11, rel_tol, abs_tol)
+            && self.m12.is_close_impl(&other.m12, rel_tol, abs_tol)
+            && self.m21.is_close_impl(&other.m21, rel_tol, abs_tol)
+            && self.m22.is_close_impl(&other.m22, rel_tol, abs_tol)
+            && self.m31.is_close_impl(&other.m31, rel_tol, abs_tol)
+            && self.m32.is_close_impl(&other.m32, rel_tol, abs_tol)
     }
 }
 
@@ -361,30 +249,23 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.m11.is_close_tol(&other.m11, rel_tol, abs_tol)
-            && self.m12.is_close_tol(&other.m12, rel_tol, abs_tol)
-            && self.m13.is_close_tol(&other.m13, rel_tol, abs_tol)
-            && self.m14.is_close_tol(&other.m14, rel_tol, abs_tol)
-            && self.m21.is_close_tol(&other.m21, rel_tol, abs_tol)
-            && self.m22.is_close_tol(&other.m22, rel_tol, abs_tol)
-            && self.m23.is_close_tol(&other.m23, rel_tol, abs_tol)
-            && self.m24.is_close_tol(&other.m24, rel_tol, abs_tol)
-            && self.m31.is_close_tol(&other.m31, rel_tol, abs_tol)
-            && self.m32.is_close_tol(&other.m32, rel_tol, abs_tol)
-            && self.m33.is_close_tol(&other.m33, rel_tol, abs_tol)
-            && self.m34.is_close_tol(&other.m34, rel_tol, abs_tol)
-            && self.m41.is_close_tol(&other.m41, rel_tol, abs_tol)
-            && self.m42.is_close_tol(&other.m42, rel_tol, abs_tol)
-            && self.m43.is_close_tol(&other.m43, rel_tol, abs_tol)
-            && self.m44.is_close_tol(&other.m44, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.m11.is_close_impl(&other.m11, rel_tol, abs_tol)
+            && self.m12.is_close_impl(&other.m12, rel_tol, abs_tol)
+            && self.m13.is_close_impl(&other.m13, rel_tol, abs_tol)
+            && self.m14.is_close_impl(&other.m14, rel_tol, abs_tol)
+            && self.m21.is_close_impl(&other.m21, rel_tol, abs_tol)
+            && self.m22.is_close_impl(&other.m22, rel_tol, abs_tol)
+            && self.m23.is_close_impl(&other.m23, rel_tol, abs_tol)
+            && self.m24.is_close_impl(&other.m24, rel_tol, abs_tol)
+            && self.m31.is_close_impl(&other.m31, rel_tol, abs_tol)
+            && self.m32.is_close_impl(&other.m32, rel_tol, abs_tol)
+            && self.m33.is_close_impl(&other.m33, rel_tol, abs_tol)
+            && self.m34.is_close_impl(&other.m34, rel_tol, abs_tol)
+            && self.m41.is_close_impl(&other.m41, rel_tol, abs_tol)
+            && self.m42.is_close_impl(&other.m42, rel_tol, abs_tol)
+            && self.m43.is_close_impl(&other.m43, rel_tol, abs_tol)
+            && self.m44.is_close_impl(&other.m44, rel_tol, abs_tol)
     }
 }
 
@@ -396,16 +277,9 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.x.is_close_tol(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_tol(&other.y, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
+            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
     }
 }
 
@@ -417,17 +291,10 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.x.is_close_tol(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_tol(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_tol(&other.z, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
+            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
     }
 }
 
@@ -439,16 +306,9 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.x.is_close_tol(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_tol(&other.y, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
+            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
     }
 }
 
@@ -460,17 +320,10 @@ where
     const REL_TOL: T = T::REL_TOL;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl core::borrow::Borrow<Self>,
-        rel_tol: impl core::borrow::Borrow<T>,
-        abs_tol: impl core::borrow::Borrow<T>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol): (&Self, &T, &T) =
-            (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
-        self.x.is_close_tol(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_tol(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_tol(&other.z, rel_tol, abs_tol)
+    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
+            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
     }
 }
 

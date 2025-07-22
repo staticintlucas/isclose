@@ -45,13 +45,14 @@
 //!     const ABS_TOL: f32 = <f32 as IsClose>::ABS_TOL;
 //!     const REL_TOL: f32 = <f32 as IsClose>::REL_TOL;
 //!
-//!     fn is_close_tol(
+//!     // The is_close_impl function is the only one that must be implemented
+//!     // to implement IsClose. The other functions will delegate to this one.
+//!     fn is_close_impl(
 //!         &self,
-//!         other: impl Borrow<Self>,
-//!         rel_tol: impl Borrow<f32>,
-//!         abs_tol: impl Borrow<f32>,
+//!         other: &Self,
+//!         rel_tol: &f32,
+//!         abs_tol: &f32,
 //!     ) -> bool {
-//!         let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
 //!         self.x.is_close_tol(other.x, rel_tol, abs_tol) &&
 //!             self.y.is_close_tol(other.y, rel_tol, abs_tol)
 //!     }
@@ -146,39 +147,69 @@ where
     const REL_TOL: Tolerance;
 
     /// Check if two values are approximately equal using the given relative and
-    /// absolute tolerances
+    /// absolute tolerances.
     ///
-    /// This function must be reimplemented to implement the [`IsClose`] trait
-    /// for other types.
+    /// This is the only function that must be reimplemented to implement the
+    /// [`IsClose`] trait for foreign types.
+    ///
+    /// **Note:** This function exists to allow the other `is_close*` functions
+    /// to delegate to this one. It should almost never be called directly.
+    fn is_close_impl(&self, other: &Self, rel_tol: &Tolerance, abs_tol: &Tolerance) -> bool;
+
+    /// Check if two values are approximately equal using the given relative and
+    /// absolute tolerances.
+    ///
+    /// **Note:** When implementing [`IsClose`] for foreign types the default
+    /// implementation of [`IsClose::is_close_tol`] should almost never be
+    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
+    /// which this function delegates to.
+    #[inline]
     fn is_close_tol(
         &self,
         other: impl Borrow<Self>,
         rel_tol: impl Borrow<Tolerance>,
         abs_tol: impl Borrow<Tolerance>,
-    ) -> bool;
+    ) -> bool {
+        self.is_close_impl(other.borrow(), rel_tol.borrow(), abs_tol.borrow())
+    }
 
     /// Check if two values are approximately equal. This is equivalent to
     /// calling [`IsClose::is_close_tol`] with [`IsClose::REL_TOL`] and
     /// [`IsClose::ABS_TOL`] as the respective tolerance arguments.
+    ///
+    /// **Note:** When implementing [`IsClose`] for foreign types the default
+    /// implementation of [`IsClose::is_close`] should almost never be
+    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
+    /// which this function delegates to.
     #[inline]
     fn is_close(&self, other: impl Borrow<Self>) -> bool {
-        self.is_close_tol(other, Self::REL_TOL, Self::ABS_TOL)
+        self.is_close_impl(other.borrow(), &Self::REL_TOL, &Self::ABS_TOL)
     }
 
     /// Check if two values are approximately equal using the given relative
     /// tolerance. This is equivalent to calling [`IsClose::is_close_tol`] with
     /// an absolute tolerance of `0.0`.
+    ///
+    /// **Note:** When implementing [`IsClose`] for foreign types the default
+    /// implementation of [`IsClose::is_close_rel_tol`] should almost never be
+    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
+    /// which this function delegates to.
     #[inline]
     fn is_close_rel_tol(&self, other: impl Borrow<Self>, rel_tol: impl Borrow<Tolerance>) -> bool {
-        self.is_close_tol(other, rel_tol, Tolerance::ZERO)
+        self.is_close_impl(other.borrow(), rel_tol.borrow(), &Tolerance::ZERO)
     }
 
     /// Check if two values are approximately equal using the given absolute
     /// tolerance. This is equivalent to calling [`IsClose::is_close_tol`] with
     /// an relative tolerance of `0.0`.
+    ///
+    /// **Note:** When implementing [`IsClose`] for foreign types the default
+    /// implementation of [`IsClose::is_close_abs_tol`] should almost never be
+    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
+    /// which this function delegates to.
     #[inline]
     fn is_close_abs_tol(&self, other: impl Borrow<Self>, abs_tol: impl Borrow<Tolerance>) -> bool {
-        self.is_close_tol(other, Tolerance::ZERO, abs_tol)
+        self.is_close_impl(other.borrow(), &Tolerance::ZERO, abs_tol.borrow())
     }
 }
 
@@ -191,13 +222,7 @@ impl IsClose for f32 {
     const REL_TOL: Self = 1e-6;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl Borrow<Self>,
-        rel_tol: impl Borrow<Self>,
-        abs_tol: impl Borrow<Self>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
+    fn is_close_impl(&self, other: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
         let tol = Self::max(Abs::abs(self), Abs::abs(other)) * rel_tol + abs_tol;
         (*self - *other).abs() <= tol
     }
@@ -212,13 +237,7 @@ impl IsClose for f64 {
     const REL_TOL: Self = 1e-9;
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl Borrow<Self>,
-        rel_tol: impl Borrow<Self>,
-        abs_tol: impl Borrow<Self>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
+    fn is_close_impl(&self, other: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
         let tol = Self::max(Abs::abs(self), Abs::abs(other)) * rel_tol + abs_tol;
         (*self - *other).abs() <= tol
     }

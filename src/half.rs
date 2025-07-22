@@ -1,5 +1,3 @@
-use core::borrow::Borrow;
-
 use crate::{IsClose, Zero};
 
 use half::{bf16, f16};
@@ -13,15 +11,9 @@ impl IsClose for f16 {
     const REL_TOL: Self = Self::from_f32_const(1e-3);
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl Borrow<Self>,
-        rel_tol: impl Borrow<Self>,
-        abs_tol: impl Borrow<Self>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
+    fn is_close_impl(&self, other: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
         self.to_f32()
-            .is_close_tol(other.to_f32(), rel_tol.to_f32(), abs_tol.to_f32())
+            .is_close_impl(&other.to_f32(), &rel_tol.to_f32(), &abs_tol.to_f32())
     }
 }
 
@@ -34,15 +26,9 @@ impl IsClose for bf16 {
     const REL_TOL: Self = Self::from_f32_const(1e-2);
 
     #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl Borrow<Self>,
-        rel_tol: impl Borrow<Self>,
-        abs_tol: impl Borrow<Self>,
-    ) -> bool {
-        let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
+    fn is_close_impl(&self, other: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
         self.to_f32()
-            .is_close_tol(other.to_f32(), rel_tol.to_f32(), abs_tol.to_f32())
+            .is_close_impl(&other.to_f32(), &rel_tol.to_f32(), &abs_tol.to_f32())
     }
 }
 

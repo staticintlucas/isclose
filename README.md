@@ -54,13 +54,14 @@ impl IsClose<f32> for Vector {
     const ABS_TOL: f32 = <f32 as IsClose>::ABS_TOL;
     const REL_TOL: f32 = <f32 as IsClose>::REL_TOL;
 
-    fn is_close_tol(
+    // The is_close_impl function is the only one that must be implemented
+    // to implement IsClose. The other functions will delegate to this one.
+    fn is_close_impl(
         &self,
-        other: impl Borrow<Self>,
-        rel_tol: impl Borrow<f32>,
-        abs_tol: impl Borrow<f32>,
+        other: &Self,
+        rel_tol: &f32,
+        abs_tol: &f32,
     ) -> bool {
-        let (other, rel_tol, abs_tol) = (other.borrow(), rel_tol.borrow(), abs_tol.borrow());
         self.x.is_close_tol(other.x, rel_tol, abs_tol) &&
             self.y.is_close_tol(other.y, rel_tol, abs_tol)
     }
