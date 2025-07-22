@@ -1,12 +1,19 @@
-//! This crate provides a set of traits and macros for comparing arbitrary
-//! types.
+//! This crate provides a set of traits and macros for comparing arbitrary types.
 //!
 //! The trait [`IsClose`] is implemented by default for [`f32`] and [`f64`].
 //!
 //! Additional implementations are also hidden behind the following features:
 //!
-//! - `half` implements [`IsClose`] for [`f16`][::half::f16] and [`bf16`][::half::bf16]
+//! - `half` implements [`IsClose`] for [half]'s [`f16`] and [`bf16`]
 //! - `euclid` implements [`IsClose`] for [euclid]'s geometric types
+//!
+//! [`IsClose`]: crate::IsClose
+//! [`f32`]: ::std::f32
+//! [`f64`]: ::std::f64
+//! [`f16`]: ::half::f16
+//! [`bf16`]: ::half::bf16
+//! [half]: https://crates.io/crates/half
+//! [euclid]: https://crates.io/crates/euclid
 //!
 //! ## Usage:
 //!

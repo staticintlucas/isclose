@@ -7,21 +7,26 @@
 [actions]: https://github.com/staticintlucas/isclose/actions?query=branch%3Amain
 [crates]: https://crates.io/crates/isclose
 
+<!-- cargo-rdme start -->
+
 This crate provides a set of traits and macros for comparing arbitrary types.
 
-The trait `IsClose` is implemented by default for `f32` and `f64`.
+The trait [`IsClose`] is implemented by default for [`f32`] and [`f64`].
 
 Additional implementations are also hidden behind the following features:
 
-- `half` implements `IsClose` for [half]'s `f16` and `bf16`
-- `euclid` implements `IsClose` for [euclid]'s geometric types
+- `half` implements [`IsClose`] for [half]'s `f16` and `bf16`
+- `euclid` implements [`IsClose`] for [euclid]'s geometric types
 
+[`IsClose`]: https://docs.rs/isclose/latest/isclose/trait.IsClose.html
+[`f32`]: https://doc.rust-lang.org/stable/std/f32/
+[`f64`]: https://doc.rust-lang.org/stable/std/f64/
 [half]: https://crates.io/crates/half
 [euclid]: https://crates.io/crates/euclid
 
-## Usage:
+### Usage:
 
-```Rust
+```rust
 use isclose::{IsClose, assert_is_close};
 
 // This will fail!
@@ -34,9 +39,9 @@ assert!((0.1 + 0.2).is_close(0.3));
 assert_is_close!(0.1 + 0.2, 0.3);
 ```
 
-You can also implement `IsClose` for custom types
+You can also implement [`IsClose`] for custom types
 
-```Rust
+```rust
 use isclose::{IsClose, assert_is_close};
 use std::borrow::Borrow;
 
@@ -72,6 +77,8 @@ assert_is_close!(
     }
 )
 ```
+
+<!-- cargo-rdme end -->
 
 ## Licence
 
