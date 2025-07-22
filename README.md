@@ -36,7 +36,7 @@ assert!((0.1 + 0.2).is_close(0.3));
 assert_is_close!(0.1 + 0.2, 0.3);
 ```
 
-You can also implement [`IsClose`] for custom types
+You can also implement `IsClose` for custom types
 
 ```rust
 use isclose::{IsClose, assert_is_close};

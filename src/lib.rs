@@ -25,7 +25,7 @@
 //! assert_is_close!(0.1 + 0.2, 0.3);
 //! ```
 //!
-//! You can also implement [`IsClose`] for custom types
+//! You can also implement `IsClose` for custom types
 //!
 //! ```
 //! use isclose::{IsClose, assert_is_close};
