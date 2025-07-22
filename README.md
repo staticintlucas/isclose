@@ -59,8 +59,8 @@ impl IsClose<f32> for Vector {
         rel_tol: &f32,
         abs_tol: &f32,
     ) -> bool {
-        self.x.is_close_tol(other.x, rel_tol, abs_tol) &&
-            self.y.is_close_tol(other.y, rel_tol, abs_tol)
+        self.x.is_close_impl(&other.x, rel_tol, abs_tol) &&
+            self.y.is_close_impl(&other.y, rel_tol, abs_tol)
     }
 }
 

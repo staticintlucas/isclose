@@ -37,24 +37,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn f16_is_close_tol() {
+    fn f16_is_close_impl() {
         use half::f16;
         assert!((f16::from_f32(0.1) + f16::from_f32(0.2)).is_close(f16::from_f32(0.3)));
-        assert!(!(f16::from_f32(0.1) + f16::from_f32(0.2)).is_close_tol(
-            f16::from_f32(0.3),
-            f16::from_f32(1e-6),
-            f16::from_f32(1e-6)
+        assert!(!(f16::from_f32(0.1) + f16::from_f32(0.2)).is_close_impl(
+            &f16::from_f32(0.3),
+            &f16::from_f32(1e-6),
+            &f16::from_f32(1e-6)
         ));
     }
 
     #[test]
-    fn bf16_is_close_tol() {
+    fn bf16_is_close_impl() {
         use half::bf16;
         assert!((bf16::from_f32(0.3) + bf16::EPSILON).is_close(bf16::from_f32(0.3)));
-        assert!(!(bf16::from_f32(0.3) + bf16::EPSILON).is_close_tol(
-            bf16::from_f32(0.3),
-            bf16::from_f32(1e-4),
-            bf16::from_f32(1e-4)
+        assert!(!(bf16::from_f32(0.3) + bf16::EPSILON).is_close_impl(
+            &bf16::from_f32(0.3),
+            &bf16::from_f32(1e-4),
+            &bf16::from_f32(1e-4)
         ));
     }
 }

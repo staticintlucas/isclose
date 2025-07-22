@@ -48,8 +48,8 @@
 //!         rel_tol: &f32,
 //!         abs_tol: &f32,
 //!     ) -> bool {
-//!         self.x.is_close_tol(other.x, rel_tol, abs_tol) &&
-//!             self.y.is_close_tol(other.y, rel_tol, abs_tol)
+//!         self.x.is_close_impl(&other.x, rel_tol, abs_tol) &&
+//!             self.y.is_close_impl(&other.y, rel_tol, abs_tol)
 //!     }
 //! }
 //!
@@ -272,14 +272,14 @@ mod tests {
     }
 
     #[test]
-    fn f32_is_close_tol() {
-        assert!(PI_F32.is_close_tol(22.0 / 7.0, 1e-2, 1e-2));
-        assert!(!PI_F32.is_close_tol(22.0 / 7.0, 1e-5, 1e-5));
+    fn f32_is_close_impl() {
+        assert!(PI_F32.is_close_impl(&(22.0 / 7.0), &1e-2, &1e-2));
+        assert!(!PI_F32.is_close_impl(&(22.0 / 7.0), &1e-5, &1e-5));
     }
 
     #[test]
-    fn f64_is_close_tol() {
-        assert!(PI_F64.is_close_tol(22.0 / 7.0, 1e-2, 1e-2));
-        assert!(!PI_F64.is_close_tol(22.0 / 7.0, 1e-5, 1e-5));
+    fn f64_is_close_impl() {
+        assert!(PI_F64.is_close_impl(&(22.0 / 7.0), &1e-2, &1e-2));
+        assert!(!PI_F64.is_close_impl(&(22.0 / 7.0), &1e-5, &1e-5));
     }
 }
