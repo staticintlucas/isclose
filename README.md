@@ -30,7 +30,7 @@ use isclose::{IsClose, assert_is_close};
 // assert_eq!(0.1 + 0.2, 0.3)
 
 // This will pass
-assert!((0.1 + 0.2).is_close(0.3));
+assert!((0.1 + 0.2).is_close(&0.3));
 
 // Equivalent, but gives better error messages
 assert_is_close!(0.1 + 0.2, 0.3);
@@ -45,22 +45,25 @@ use std::borrow::Borrow;
 #[derive(Debug)]
 struct Vector { x: f32, y: f32 }
 
-impl IsClose<f32> for Vector {
+impl IsClose for Vector {
+    type Tolerance = f32;
+    const ZERO_TOL: f32 = 0.0;
+
     // Use the same default tolerances as f32
     // You can override the defaults here if necessary
     const ABS_TOL: f32 = <f32 as IsClose>::ABS_TOL;
     const REL_TOL: f32 = <f32 as IsClose>::REL_TOL;
 
-    // The is_close_impl function is the only one that must be implemented
+    // The is_close function is the only one that must be implemented
     // to implement IsClose. The other functions will delegate to this one.
-    fn is_close_impl(
+    fn is_close_tol(
         &self,
-        other: &Self,
+        rhs: &Self,
         rel_tol: &f32,
         abs_tol: &f32,
     ) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol) &&
-            self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol) &&
+            self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
     }
 }
 

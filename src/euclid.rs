@@ -4,326 +4,368 @@ use euclid::{
     Translation2D, Translation3D, Vector2D, Vector3D,
 };
 
-use crate::{IsClose, Zero};
+use crate::IsClose;
 
-impl<T> IsClose<T> for Angle<T>
+impl<T> IsClose for Angle<T>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.radians.is_close_impl(&other.radians, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.radians.is_close_tol(&rhs.radians, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Box2D<T, U>
+impl<T, U> IsClose for Box2D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.min.is_close_impl(&other.min, rel_tol, abs_tol)
-            && self.max.is_close_impl(&other.max, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.min.is_close_tol(&rhs.min, rel_tol, abs_tol)
+            && self.max.is_close_tol(&rhs.max, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Box3D<T, U>
+impl<T, U> IsClose for Box3D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.min.is_close_impl(&other.min, rel_tol, abs_tol)
-            && self.max.is_close_impl(&other.max, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.min.is_close_tol(&rhs.min, rel_tol, abs_tol)
+            && self.max.is_close_tol(&rhs.max, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for HomogeneousVector<T, U>
+impl<T, U> IsClose for HomogeneousVector<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
-            && self.w.is_close_impl(&other.w, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol)
+            && self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
+            && self.z.is_close_tol(&rhs.z, rel_tol, abs_tol)
+            && self.w.is_close_tol(&rhs.w, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Length<T, U>
+impl<T, U> IsClose for Length<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.0.is_close_impl(&other.0, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.0.is_close_tol(&rhs.0, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Point2D<T, U>
+impl<T, U> IsClose for Point2D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol)
+            && self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Point3D<T, U>
+impl<T, U> IsClose for Point3D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol)
+            && self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
+            && self.z.is_close_tol(&rhs.z, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Rect<T, U>
+impl<T, U> IsClose for Rect<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.origin.is_close_impl(&other.origin, rel_tol, abs_tol)
-            && self.size.is_close_impl(&other.size, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.origin.is_close_tol(&rhs.origin, rel_tol, abs_tol)
+            && self.size.is_close_tol(&rhs.size, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for RigidTransform3D<T, U1, U2>
+impl<T, U1, U2> IsClose for RigidTransform3D<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
         self.rotation
-            .is_close_impl(&other.rotation, rel_tol, abs_tol)
+            .is_close_tol(&rhs.rotation, rel_tol, abs_tol)
             && self
                 .translation
-                .is_close_impl(&other.translation, rel_tol, abs_tol)
+                .is_close_tol(&rhs.translation, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for Rotation2D<T, U1, U2>
+impl<T, U1, U2> IsClose for Rotation2D<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.angle.is_close_impl(&other.angle, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.angle.is_close_tol(&rhs.angle, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for Rotation3D<T, U1, U2>
+impl<T, U1, U2> IsClose for Rotation3D<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.i.is_close_impl(&other.i, rel_tol, abs_tol)
-            && self.j.is_close_impl(&other.j, rel_tol, abs_tol)
-            && self.k.is_close_impl(&other.k, rel_tol, abs_tol)
-            && self.r.is_close_impl(&other.r, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.i.is_close_tol(&rhs.i, rel_tol, abs_tol)
+            && self.j.is_close_tol(&rhs.j, rel_tol, abs_tol)
+            && self.k.is_close_tol(&rhs.k, rel_tol, abs_tol)
+            && self.r.is_close_tol(&rhs.r, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for Scale<T, U1, U2>
+impl<T, U1, U2> IsClose for Scale<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.0.is_close_impl(&other.0, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.0.is_close_tol(&rhs.0, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for SideOffsets2D<T, U>
+impl<T, U> IsClose for SideOffsets2D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.top.is_close_impl(&other.top, rel_tol, abs_tol)
-            && self.right.is_close_impl(&other.right, rel_tol, abs_tol)
-            && self.bottom.is_close_impl(&other.bottom, rel_tol, abs_tol)
-            && self.left.is_close_impl(&other.left, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.top.is_close_tol(&rhs.top, rel_tol, abs_tol)
+            && self.right.is_close_tol(&rhs.right, rel_tol, abs_tol)
+            && self.bottom.is_close_tol(&rhs.bottom, rel_tol, abs_tol)
+            && self.left.is_close_tol(&rhs.left, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Size2D<T, U>
+impl<T, U> IsClose for Size2D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.width.is_close_impl(&other.width, rel_tol, abs_tol)
-            && self.height.is_close_impl(&other.height, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.width.is_close_tol(&rhs.width, rel_tol, abs_tol)
+            && self.height.is_close_tol(&rhs.height, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Size3D<T, U>
+impl<T, U> IsClose for Size3D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.width.is_close_impl(&other.width, rel_tol, abs_tol)
-            && self.height.is_close_impl(&other.height, rel_tol, abs_tol)
-            && self.depth.is_close_impl(&other.depth, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.width.is_close_tol(&rhs.width, rel_tol, abs_tol)
+            && self.height.is_close_tol(&rhs.height, rel_tol, abs_tol)
+            && self.depth.is_close_tol(&rhs.depth, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for Transform2D<T, U1, U2>
+impl<T, U1, U2> IsClose for Transform2D<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.m11.is_close_impl(&other.m11, rel_tol, abs_tol)
-            && self.m12.is_close_impl(&other.m12, rel_tol, abs_tol)
-            && self.m21.is_close_impl(&other.m21, rel_tol, abs_tol)
-            && self.m22.is_close_impl(&other.m22, rel_tol, abs_tol)
-            && self.m31.is_close_impl(&other.m31, rel_tol, abs_tol)
-            && self.m32.is_close_impl(&other.m32, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.m11.is_close_tol(&rhs.m11, rel_tol, abs_tol)
+            && self.m12.is_close_tol(&rhs.m12, rel_tol, abs_tol)
+            && self.m21.is_close_tol(&rhs.m21, rel_tol, abs_tol)
+            && self.m22.is_close_tol(&rhs.m22, rel_tol, abs_tol)
+            && self.m31.is_close_tol(&rhs.m31, rel_tol, abs_tol)
+            && self.m32.is_close_tol(&rhs.m32, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for Transform3D<T, U1, U2>
+impl<T, U1, U2> IsClose for Transform3D<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.m11.is_close_impl(&other.m11, rel_tol, abs_tol)
-            && self.m12.is_close_impl(&other.m12, rel_tol, abs_tol)
-            && self.m13.is_close_impl(&other.m13, rel_tol, abs_tol)
-            && self.m14.is_close_impl(&other.m14, rel_tol, abs_tol)
-            && self.m21.is_close_impl(&other.m21, rel_tol, abs_tol)
-            && self.m22.is_close_impl(&other.m22, rel_tol, abs_tol)
-            && self.m23.is_close_impl(&other.m23, rel_tol, abs_tol)
-            && self.m24.is_close_impl(&other.m24, rel_tol, abs_tol)
-            && self.m31.is_close_impl(&other.m31, rel_tol, abs_tol)
-            && self.m32.is_close_impl(&other.m32, rel_tol, abs_tol)
-            && self.m33.is_close_impl(&other.m33, rel_tol, abs_tol)
-            && self.m34.is_close_impl(&other.m34, rel_tol, abs_tol)
-            && self.m41.is_close_impl(&other.m41, rel_tol, abs_tol)
-            && self.m42.is_close_impl(&other.m42, rel_tol, abs_tol)
-            && self.m43.is_close_impl(&other.m43, rel_tol, abs_tol)
-            && self.m44.is_close_impl(&other.m44, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.m11.is_close_tol(&rhs.m11, rel_tol, abs_tol)
+            && self.m12.is_close_tol(&rhs.m12, rel_tol, abs_tol)
+            && self.m13.is_close_tol(&rhs.m13, rel_tol, abs_tol)
+            && self.m14.is_close_tol(&rhs.m14, rel_tol, abs_tol)
+            && self.m21.is_close_tol(&rhs.m21, rel_tol, abs_tol)
+            && self.m22.is_close_tol(&rhs.m22, rel_tol, abs_tol)
+            && self.m23.is_close_tol(&rhs.m23, rel_tol, abs_tol)
+            && self.m24.is_close_tol(&rhs.m24, rel_tol, abs_tol)
+            && self.m31.is_close_tol(&rhs.m31, rel_tol, abs_tol)
+            && self.m32.is_close_tol(&rhs.m32, rel_tol, abs_tol)
+            && self.m33.is_close_tol(&rhs.m33, rel_tol, abs_tol)
+            && self.m34.is_close_tol(&rhs.m34, rel_tol, abs_tol)
+            && self.m41.is_close_tol(&rhs.m41, rel_tol, abs_tol)
+            && self.m42.is_close_tol(&rhs.m42, rel_tol, abs_tol)
+            && self.m43.is_close_tol(&rhs.m43, rel_tol, abs_tol)
+            && self.m44.is_close_tol(&rhs.m44, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for Translation2D<T, U1, U2>
+impl<T, U1, U2> IsClose for Translation2D<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol)
+            && self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
     }
 }
 
-impl<T, U1, U2> IsClose<T> for Translation3D<T, U1, U2>
+impl<T, U1, U2> IsClose for Translation3D<T, U1, U2>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol)
+            && self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
+            && self.z.is_close_tol(&rhs.z, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Vector2D<T, U>
+impl<T, U> IsClose for Vector2D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol)
+            && self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
     }
 }
 
-impl<T, U> IsClose<T> for Vector3D<T, U>
+impl<T, U> IsClose for Vector3D<T, U>
 where
-    T: IsClose<T> + Zero,
+    T: IsClose<Tolerance = T>,
 {
-    const ABS_TOL: T = T::ABS_TOL;
-    const REL_TOL: T = T::REL_TOL;
+    type Tolerance = T;
+    const ZERO_TOL: T = <T as IsClose>::ZERO_TOL;
+    const ABS_TOL: T = <T as IsClose>::ABS_TOL;
+    const REL_TOL: T = <T as IsClose>::REL_TOL;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.x.is_close_impl(&other.x, rel_tol, abs_tol)
-            && self.y.is_close_impl(&other.y, rel_tol, abs_tol)
-            && self.z.is_close_impl(&other.z, rel_tol, abs_tol)
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
+        self.x.is_close_tol(&rhs.x, rel_tol, abs_tol)
+            && self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
+            && self.z.is_close_tol(&rhs.z, rel_tol, abs_tol)
     }
 }
 
@@ -430,7 +472,7 @@ mod tests {
         let rot1 = Rotation2D::new(Angle::degrees(180.0));
         let rot2 = Rotation2D::new(Angle::radians(PI));
 
-        assert!(rot1.is_close(rot2));
+        assert!(rot1.is_close(&rot2));
     }
 
     #[test]

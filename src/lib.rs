@@ -19,7 +19,7 @@
 //! // assert_eq!(0.1 + 0.2, 0.3)
 //!
 //! // This will pass
-//! assert!((0.1 + 0.2).is_close(0.3));
+//! assert!((0.1 + 0.2).is_close(&0.3));
 //!
 //! // Equivalent, but gives better error messages
 //! assert_is_close!(0.1 + 0.2, 0.3);
@@ -34,22 +34,25 @@
 //! #[derive(Debug)]
 //! struct Vector { x: f32, y: f32 }
 //!
-//! impl IsClose<f32> for Vector {
+//! impl IsClose for Vector {
+//!     type Tolerance = f32;
+//!     const ZERO_TOL: f32 = 0.0;
+//!
 //!     // Use the same default tolerances as f32
 //!     // You can override the defaults here if necessary
 //!     const ABS_TOL: f32 = <f32 as IsClose>::ABS_TOL;
 //!     const REL_TOL: f32 = <f32 as IsClose>::REL_TOL;
 //!
-//!     // The is_close_impl function is the only one that must be implemented
+//!     // The is_close function is the only one that must be implemented
 //!     // to implement IsClose. The other functions will delegate to this one.
-//!     fn is_close_impl(
+//!     fn is_close_tol(
 //!         &self,
-//!         other: &Self,
+//!         rhs: &Self,
 //!         rel_tol: &f32,
 //!         abs_tol: &f32,
 //!     ) -> bool {
-//!         self.x.is_close_impl(&other.x, rel_tol, abs_tol) &&
-//!             self.y.is_close_impl(&other.y, rel_tol, abs_tol)
+//!         self.x.is_close_tol(&rhs.x, rel_tol, abs_tol) &&
+//!             self.y.is_close_tol(&rhs.y, rel_tol, abs_tol)
 //!     }
 //! }
 //!
@@ -87,8 +90,6 @@ mod half;
 #[cfg(feature = "euclid")]
 mod euclid;
 
-use core::borrow::Borrow;
-
 /// Utility crate since floats don't implement [`f32::abs`] in `no_std`
 trait Abs {
     fn abs(&self) -> Self;
@@ -124,49 +125,27 @@ mod abs {
     }
 }
 
-/// Trait used to return a generic zero value for the tolerance
-pub trait Zero {
-    /// The zero constant
-    const ZERO: Self;
-}
-
 /// Trait used for testing if floating point values are approximately equal
-pub trait IsClose<Tolerance = Self>
-where
-    Tolerance: Zero,
-{
+pub trait IsClose<Rhs = Self> {
+    /// The type used for tolerance comparisons
+    type Tolerance;
+
+    /// Zero tolerance value
+    const ZERO_TOL: Self::Tolerance;
+
     /// The default absolute tolerance value
-    const ABS_TOL: Tolerance;
+    const ABS_TOL: Self::Tolerance;
 
     /// The default relative tolerance value
-    const REL_TOL: Tolerance;
+    const REL_TOL: Self::Tolerance;
 
     /// Check if two values are approximately equal using the given relative and
     /// absolute tolerances.
     ///
     /// This is the only function that must be reimplemented to implement the
     /// [`IsClose`] trait for foreign types.
-    ///
-    /// **Note:** This function exists to allow the other `is_close*` functions
-    /// to delegate to this one. It should almost never be called directly.
-    fn is_close_impl(&self, other: &Self, rel_tol: &Tolerance, abs_tol: &Tolerance) -> bool;
-
-    /// Check if two values are approximately equal using the given relative and
-    /// absolute tolerances.
-    ///
-    /// **Note:** When implementing [`IsClose`] for foreign types the default
-    /// implementation of [`IsClose::is_close_tol`] should almost never be
-    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
-    /// which this function delegates to.
-    #[inline]
-    fn is_close_tol(
-        &self,
-        other: impl Borrow<Self>,
-        rel_tol: impl Borrow<Tolerance>,
-        abs_tol: impl Borrow<Tolerance>,
-    ) -> bool {
-        self.is_close_impl(other.borrow(), rel_tol.borrow(), abs_tol.borrow())
-    }
+    fn is_close_tol(&self, rhs: &Rhs, rel_tol: &Self::Tolerance, abs_tol: &Self::Tolerance)
+        -> bool;
 
     /// Check if two values are approximately equal. This is equivalent to
     /// calling [`IsClose::is_close_tol`] with [`IsClose::REL_TOL`] and
@@ -174,11 +153,11 @@ where
     ///
     /// **Note:** When implementing [`IsClose`] for foreign types the default
     /// implementation of [`IsClose::is_close`] should almost never be
-    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
+    /// overridden. Instead, you should implement [`IsClose::is_close_tol`]
     /// which this function delegates to.
     #[inline]
-    fn is_close(&self, other: impl Borrow<Self>) -> bool {
-        self.is_close_impl(other.borrow(), &Self::REL_TOL, &Self::ABS_TOL)
+    fn is_close(&self, rhs: &Rhs) -> bool {
+        self.is_close_tol(rhs, &Self::REL_TOL, &Self::ABS_TOL)
     }
 
     /// Check if two values are approximately equal using the given relative
@@ -187,11 +166,11 @@ where
     ///
     /// **Note:** When implementing [`IsClose`] for foreign types the default
     /// implementation of [`IsClose::is_close_rel_tol`] should almost never be
-    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
+    /// overridden. Instead, you should implement [`IsClose::is_close_tol`]
     /// which this function delegates to.
     #[inline]
-    fn is_close_rel_tol(&self, other: impl Borrow<Self>, rel_tol: impl Borrow<Tolerance>) -> bool {
-        self.is_close_impl(other.borrow(), rel_tol.borrow(), &Tolerance::ZERO)
+    fn is_close_rel_tol(&self, rhs: &Rhs, rel_tol: &Self::Tolerance) -> bool {
+        self.is_close_tol(rhs, rel_tol, &Self::ZERO_TOL)
     }
 
     /// Check if two values are approximately equal using the given absolute
@@ -200,41 +179,157 @@ where
     ///
     /// **Note:** When implementing [`IsClose`] for foreign types the default
     /// implementation of [`IsClose::is_close_abs_tol`] should almost never be
-    /// overridden. Instead, you should implement [`IsClose::is_close_impl`]
+    /// overridden. Instead, you should implement [`IsClose::is_close_tol`]
     /// which this function delegates to.
     #[inline]
-    fn is_close_abs_tol(&self, other: impl Borrow<Self>, abs_tol: impl Borrow<Tolerance>) -> bool {
-        self.is_close_impl(other.borrow(), &Tolerance::ZERO, abs_tol.borrow())
+    fn is_close_abs_tol(&self, rhs: &Rhs, abs_tol: &Self::Tolerance) -> bool {
+        self.is_close_tol(rhs, &Self::ZERO_TOL, abs_tol)
     }
 }
 
-impl Zero for f32 {
-    const ZERO: Self = 0.0;
-}
-
 impl IsClose for f32 {
+    type Tolerance = Self;
+    const ZERO_TOL: Self = 0.0;
     const ABS_TOL: Self = 1e-6;
     const REL_TOL: Self = 1e-6;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
-        let tol = Self::max(Abs::abs(self), Abs::abs(other)) * rel_tol + abs_tol;
-        (*self - *other).abs() <= tol
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
+        let tol = Self::max(Abs::abs(self), Abs::abs(rhs)) * rel_tol + abs_tol;
+        (*self - *rhs).abs() <= tol
     }
 }
 
-impl Zero for f64 {
-    const ZERO: Self = 0.0;
-}
-
 impl IsClose for f64 {
+    type Tolerance = Self;
+    const ZERO_TOL: Self = 0.0;
     const ABS_TOL: Self = 1e-9;
     const REL_TOL: Self = 1e-9;
 
     #[inline]
-    fn is_close_impl(&self, other: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
-        let tol = Self::max(Abs::abs(self), Abs::abs(other)) * rel_tol + abs_tol;
-        (*self - *other).abs() <= tol
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &Self, abs_tol: &Self) -> bool {
+        let tol = Self::max(Abs::abs(self), Abs::abs(rhs)) * rel_tol + abs_tol;
+        (*self - *rhs).abs() <= tol
+    }
+}
+
+impl<Typ, Tol> IsClose<Typ> for &Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &Typ, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        (**self).is_close_tol(rhs, rel_tol, abs_tol)
+    }
+}
+
+impl<Typ, Tol> IsClose<Typ> for &mut Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &Typ, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        (**self).is_close_tol(rhs, rel_tol, abs_tol)
+    }
+}
+
+impl<Typ, Tol> IsClose<&Typ> for Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &&Typ, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        self.is_close_tol(*rhs, rel_tol, abs_tol)
+    }
+}
+
+impl<Typ, Tol> IsClose<&mut Typ> for Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &&mut Typ, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        self.is_close_tol(*rhs, rel_tol, abs_tol)
+    }
+}
+
+impl<Typ, Tol> IsClose for &Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        (**self).is_close_tol(*rhs, rel_tol, abs_tol)
+    }
+}
+
+impl<Typ, Tol> IsClose<&Typ> for &mut Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &&Typ, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        (**self).is_close_tol(*rhs, rel_tol, abs_tol)
+    }
+}
+
+impl<Typ, Tol> IsClose<&mut Typ> for &Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &&mut Typ, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        (**self).is_close_tol(*rhs, rel_tol, abs_tol)
+    }
+}
+
+impl<Typ, Tol> IsClose for &mut Typ
+where
+    Typ: IsClose<Tolerance = Tol>,
+{
+    type Tolerance = Tol;
+    const ZERO_TOL: Tol = <Typ as IsClose>::ZERO_TOL;
+    const ABS_TOL: Tol = <Typ as IsClose>::ABS_TOL;
+    const REL_TOL: Tol = <Typ as IsClose>::REL_TOL;
+
+    #[inline]
+    fn is_close_tol(&self, rhs: &Self, rel_tol: &Tol, abs_tol: &Tol) -> bool {
+        (**self).is_close_tol(*rhs, rel_tol, abs_tol)
     }
 }
 
@@ -247,39 +342,39 @@ mod tests {
 
     #[test]
     fn default_is_close() {
-        assert!(PI_F32.is_close(355.0 / 113.0));
-        assert!(!PI_F32.is_close(22.0 / 7.0));
+        assert!(PI_F32.is_close(&(355.0 / 113.0)));
+        assert!(!PI_F32.is_close(&(22.0 / 7.0)));
     }
 
     #[test]
     fn default_is_close_tol() {
-        assert!(1.0.is_close_tol(1.0 + 1e-2, 1e-1, 0.0));
-        assert!(!1e-2.is_close_tol(1e-2 + 1e-2, 1e-1, 0.0));
-        assert!(1e-2.is_close_tol(1e-2 + 1e-2, 0.0, 1e-1));
-        assert!(!1.0.is_close_tol(1.0 + 1.0, 0.0, 1e-1));
+        assert!(1.0.is_close_tol(&(1.0 + 1e-2), &1e-1, &0.0));
+        assert!(!1e-2.is_close_tol(&(1e-2 + 1e-2), &1e-1, &0.0));
+        assert!(1e-2.is_close_tol(&(1e-2 + 1e-2), &0.0, &1e-1));
+        assert!(!1.0.is_close_tol(&(1.0 + 1.0), &0.0, &1e-1));
     }
 
     #[test]
     fn default_is_close_rel_tol() {
-        assert!(1.0.is_close_rel_tol(1.0 + 1e-2, 1e-1));
-        assert!(!1e-2.is_close_rel_tol(1e-2 + 1e-2, 1e-1));
+        assert!(1.0.is_close_rel_tol(&(1.0 + 1e-2), &1e-1));
+        assert!(!1e-2.is_close_rel_tol(&(1e-2 + 1e-2), &1e-1));
     }
 
     #[test]
     fn default_is_close_abs_tol() {
-        assert!(1e-2.is_close_abs_tol(1e-2 + 1e-2, 1e-1));
-        assert!(!1.0.is_close_abs_tol(1.0 + 1.0, 1e-1));
+        assert!(1e-2.is_close_abs_tol(&(1e-2 + 1e-2), &1e-1));
+        assert!(!1.0.is_close_abs_tol(&(1.0 + 1.0), &1e-1));
     }
 
     #[test]
     fn f32_is_close_impl() {
-        assert!(PI_F32.is_close_impl(&(22.0 / 7.0), &1e-2, &1e-2));
-        assert!(!PI_F32.is_close_impl(&(22.0 / 7.0), &1e-5, &1e-5));
+        assert!(PI_F32.is_close_tol(&(22.0 / 7.0), &1e-2, &1e-2));
+        assert!(!PI_F32.is_close_tol(&(22.0 / 7.0), &1e-5, &1e-5));
     }
 
     #[test]
     fn f64_is_close_impl() {
-        assert!(PI_F64.is_close_impl(&(22.0 / 7.0), &1e-2, &1e-2));
-        assert!(!PI_F64.is_close_impl(&(22.0 / 7.0), &1e-5, &1e-5));
+        assert!(PI_F64.is_close_tol(&(22.0 / 7.0), &1e-2, &1e-2));
+        assert!(!PI_F64.is_close_tol(&(22.0 / 7.0), &1e-5, &1e-5));
     }
 }

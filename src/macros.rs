@@ -1,63 +1,161 @@
-use crate::{IsClose, Zero};
+use crate::IsClose;
 use core::fmt::Debug;
 
-/// Utility function to print the panicking error message
+/// Utility function for performing the comparison with default tolerances
 #[doc(hidden)]
 #[track_caller]
-pub fn assert_failed<Value, Tolerance>(
-    lhs: &Value,
-    rhs: &Value,
-    rel_tol: Option<&Tolerance>,
-    abs_tol: Option<&Tolerance>,
-    args: Option<core::fmt::Arguments<'_>>,
-) -> !
+#[inline]
+pub fn assert_is_close<Lhs, Rhs, Tol>(lhs: &Lhs, rhs: &Rhs, args: core::fmt::Arguments<'_>)
 where
-    Value: IsClose<Tolerance> + Debug,
-    Tolerance: Zero + Debug,
+    Lhs: IsClose<Rhs, Tolerance = Tol> + Debug,
+    Rhs: Debug,
+    Tol: Debug,
 {
-    let zero = Tolerance::ZERO;
-    let (def_rel, def_abs) = (Value::REL_TOL, Value::ABS_TOL);
-    let (rel_tol, abs_tol) = match (rel_tol, abs_tol) {
-        (Some(r), Some(a)) => (r, a),
-        (Some(r), None) => (r, &zero),
-        (None, Some(a)) => (&zero, a),
-        (None, None) => (&def_rel, &def_abs),
-    };
-
-    #[allow(clippy::option_if_let_else)] // map_or_else is super ugly here
-    match args {
-        Some(args) => panic!(
-            "assertion `left ~= right` failed: {}
-    left: {:?}
-   right: {:?}
- rel tol: {:?}
- abs tol: {:?}",
-            args, lhs, rhs, rel_tol, abs_tol,
-        ),
-        None => panic!(
-            "assertion `left ~= right` failed
-    left: {:?}
-   right: {:?}
- rel tol: {:?}
- abs tol: {:?}",
-            lhs, rhs, rel_tol, abs_tol,
-        ),
+    if !lhs.is_close(rhs) {
+        assert_failed(lhs, rhs, &Lhs::REL_TOL, &Lhs::ABS_TOL, args);
     }
+}
+
+/// Utility function for performing the comparison with a relative tolerance
+#[doc(hidden)]
+#[track_caller]
+#[inline]
+pub fn assert_is_close_rel_tol<Lhs, Rhs, Tol>(
+    lhs: &Lhs,
+    rhs: &Rhs,
+    rel_tol: &Tol,
+    args: core::fmt::Arguments<'_>,
+) where
+    Lhs: IsClose<Rhs, Tolerance = Tol> + Debug,
+    Rhs: Debug,
+    Tol: Debug,
+{
+    if !lhs.is_close_rel_tol(rhs, rel_tol) {
+        assert_failed(lhs, rhs, rel_tol, &Lhs::ZERO_TOL, args);
+    }
+}
+
+/// Utility function for performing the comparison with a absolute tolerance
+#[doc(hidden)]
+#[track_caller]
+#[inline]
+pub fn assert_is_close_abs_tol<Lhs, Rhs, Tol>(
+    lhs: &Lhs,
+    rhs: &Rhs,
+    abs_tol: &Tol,
+    args: core::fmt::Arguments<'_>,
+) where
+    Lhs: IsClose<Rhs, Tolerance = Tol> + Debug,
+    Rhs: Debug,
+    Tol: Debug,
+{
+    if !lhs.is_close_abs_tol(rhs, abs_tol) {
+        assert_failed(lhs, rhs, &Lhs::ZERO_TOL, abs_tol, args);
+    }
+}
+
+/// Utility function for performing the comparison with the given tolerances
+#[doc(hidden)]
+#[track_caller]
+#[inline]
+pub fn assert_is_close_tol<Lhs, Rhs, Tol>(
+    lhs: &Lhs,
+    rhs: &Rhs,
+    rel_tol: &Tol,
+    abs_tol: &Tol,
+    args: core::fmt::Arguments<'_>,
+) where
+    Lhs: IsClose<Rhs, Tolerance = Tol> + Debug,
+    Rhs: Debug,
+    Tol: Debug,
+{
+    if !lhs.is_close_tol(rhs, rel_tol, abs_tol) {
+        assert_failed(lhs, rhs, rel_tol, abs_tol, args);
+    }
+}
+
+/// Utility function to print the panicking error message
+#[track_caller]
+#[cold]
+fn assert_failed(
+    lhs: &dyn Debug,
+    rhs: &dyn Debug,
+    rel_tol: &dyn Debug,
+    abs_tol: &dyn Debug,
+    args: core::fmt::Arguments<'_>,
+) -> ! {
+    panic!(
+        "assertion `left ~= right` failed{args}
+    left: {lhs:?}
+   right: {rhs:?}
+ rel tol: {rel_tol:?}
+ abs tol: {abs_tol:?}"
+    )
 }
 
 /// Assert that two values are approximately equal
 #[macro_export]
 macro_rules! assert_is_close {
+    ($lhs:expr, $rhs:expr, abs_tol=$abs_tol:expr, rel_tol=$rel_tol:expr $(,)?) => {
+        assert_is_close!($lhs, $rhs, rel_tol=$rel_tol, abs_tol=$abs_tol);
+    };
+
+    ($lhs:expr, $rhs:expr, abs_tol=$abs_tol:expr, rel_tol=$rel_tol:expr, $($arg:tt)+) => {
+        assert_is_close!($lhs, $rhs, rel_tol=$rel_tol, abs_tol=$abs_tol, $($arg)+);
+    };
+
+    ($lhs:expr, $rhs:expr, rel_tol=$rel_tol:expr, abs_tol=$abs_tol:expr $(,)?) => {
+        match (&$lhs, &$rhs, &$rel_tol, &$abs_tol) {
+            (lhs, rhs, rel_tol, abs_tol) => {
+                $crate::macros::assert_is_close_tol(lhs, rhs, rel_tol, abs_tol, core::format_args!(""))
+            }
+        }
+    };
+
+    ($lhs:expr, $rhs:expr, rel_tol=$rel_tol:expr, abs_tol=$abs_tol:expr, $($arg:tt)+) => {
+        match (&$lhs, &$rhs, &$rel_tol, &$abs_tol) {
+            (lhs, rhs, rel_tol, abs_tol) => {
+                $crate::macros::assert_is_close_tol(lhs, rhs, rel_tol, abs_tol, core::format_args!(": {}", core::format_args!($($arg)+)))
+            }
+        }
+    };
+
+    ($lhs:expr, $rhs:expr, rel_tol=$rel_tol:expr $(,)?) => {
+        match (&$lhs, &$rhs, &$rel_tol) {
+            (lhs, rhs, rel_tol) => {
+                $crate::macros::assert_is_close_rel_tol(lhs, rhs, core::borrow::Borrow::borrow(rel_tol), core::format_args!(""))
+            }
+        }
+    };
+
+    ($lhs:expr, $rhs:expr, rel_tol=$rel_tol:expr, $($arg:tt)+) => {
+        match (&$lhs, &$rhs, &$rel_tol) {
+            (lhs, rhs, rel_tol) => {
+                $crate::macros::assert_is_close_rel_tol(lhs, rhs, core::borrow::Borrow::borrow(rel_tol), core::format_args!(": {}", core::format_args!($($arg)+)))
+            }
+        }
+    };
+
+    ($lhs:expr, $rhs:expr, abs_tol=$abs_tol:expr $(,)?) => {
+        match (&$lhs, &$rhs, &$abs_tol) {
+            (lhs, rhs, abs_tol) => {
+                $crate::macros::assert_is_close_abs_tol(lhs, rhs, core::borrow::Borrow::borrow(abs_tol), core::format_args!(""))
+            }
+        }
+    };
+
+    ($lhs:expr, $rhs:expr, abs_tol=$abs_tol:expr, $($arg:tt)+) => {
+        match (&$lhs, &$rhs, &$abs_tol) {
+            (lhs, rhs, abs_tol) => {
+                $crate::macros::assert_is_close_abs_tol(lhs, rhs, core::borrow::Borrow::borrow(abs_tol), core::format_args!(": {}", core::format_args!($($arg)+)))
+            }
+        }
+    };
+
     ($lhs:expr, $rhs:expr $(,)?) => {
         match (&$lhs, &$rhs) {
             (lhs, rhs) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs) = ((*lhs).borrow(), (*rhs).borrow());
-                if !$crate::IsClose::is_close(lhs, rhs) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, None, None, None,
-                    );
-                }
+                $crate::macros::assert_is_close(lhs, rhs, core::format_args!(""))
             }
         }
     };
@@ -65,114 +163,7 @@ macro_rules! assert_is_close {
     ($lhs:expr, $rhs:expr, $($arg:tt)+) => {
         match (&$lhs, &$rhs) {
             (lhs, rhs) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs) = ((*lhs).borrow(), (*rhs).borrow());
-                if !$crate::IsClose::is_close(lhs, rhs) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, None, None, Some(core::format_args!($($arg)+))
-                    );
-                }
-            }
-        }
-    };
-}
-
-/// Assert that two values are approximately equal using the given relative
-/// tolerance
-#[macro_export]
-macro_rules! assert_is_close_rel_tol {
-    ($lhs:expr, $rhs:expr, $rel_tol:expr $(,)?) => {
-        match (&$lhs, &$rhs, &$rel_tol) {
-            (lhs, rhs, rel_tol) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs, rel_tol) = ((*lhs).borrow(), (*rhs).borrow(), (*rel_tol).borrow());
-                if !$crate::IsClose::is_close_rel_tol(lhs, rhs, rel_tol) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, Some(rel_tol), None, None,
-                    );
-                }
-            }
-        }
-    };
-
-    ($lhs:expr, $rhs:expr, $rel_tol:expr, $($arg:tt)+) => {
-        match (&$lhs, &$rhs, &$rel_tol) {
-            (lhs, rhs, rel_tol) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs, rel_tol) = ((*lhs).borrow(), (*rhs).borrow(), (*rel_tol).borrow());
-                if !$crate::IsClose::is_close_rel_tol(lhs, rhs, rel_tol) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, Some(rel_tol), None, Some(core::format_args!($($arg)+)),
-                    );
-                }
-            }
-        }
-    };
-}
-
-/// Assert that two values are approximately equal using the given absolute
-/// tolerance
-#[macro_export]
-macro_rules! assert_is_close_abs_tol {
-    ($lhs:expr, $rhs:expr, $abs_tol:expr $(,)?) => {
-        match (&$lhs, &$rhs, &$abs_tol) {
-            (lhs, rhs, abs_tol) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs, abs_tol) = ((*lhs).borrow(), (*rhs).borrow(), (*abs_tol).borrow());
-                if !$crate::IsClose::is_close_abs_tol(lhs, rhs, abs_tol) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, None, Some(abs_tol), None,
-                    );
-                }
-            }
-        }
-    };
-
-    ($lhs:expr, $rhs:expr, $abs_tol:expr, $($arg:tt)+) => {
-        match (&$lhs, &$rhs, &$abs_tol) {
-            (lhs, rhs, abs_tol) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs, abs_tol) = ((*lhs).borrow(), (*rhs).borrow(), (*abs_tol).borrow());
-                if !$crate::IsClose::is_close_abs_tol(lhs, rhs, abs_tol) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, None, Some(abs_tol), Some(core::format_args!($($arg)+)),
-                    );
-                }
-            }
-        }
-    };
-}
-
-/// Assert that two values are approximately equal using the given relative and
-/// absolute tolerances
-#[macro_export]
-macro_rules! assert_is_close_tol {
-    ($lhs:expr, $rhs:expr, $rel_tol:expr, $abs_tol:expr $(,)?) => {
-        match (&$lhs, &$rhs, &$rel_tol, &$abs_tol) {
-            (lhs, rhs, rel_tol, abs_tol) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs, rel_tol, abs_tol) =
-                    ((*lhs).borrow(), (*rhs).borrow(), (*rel_tol).borrow(), (*abs_tol).borrow());
-                if !$crate::IsClose::is_close_tol(lhs, rhs, rel_tol, abs_tol) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, Some(rel_tol), Some(abs_tol), None,
-                    );
-                }
-            }
-        }
-    };
-
-    ($lhs:expr, $rhs:expr, $rel_tol:expr, $abs_tol:expr, $($arg:tt)+) => {
-        match (&$lhs, &$rhs, &$rel_tol, &$abs_tol) {
-            (lhs, rhs, rel_tol, abs_tol) => {
-                use core::borrow::Borrow;
-                let (lhs, rhs, rel_tol, abs_tol) =
-                    ((*lhs).borrow(), (*rhs).borrow(), (*rel_tol).borrow(), (*abs_tol).borrow());
-                if !$crate::IsClose::is_close_tol(lhs, rhs, rel_tol, abs_tol) {
-                    $crate::macros::assert_failed(
-                        lhs, rhs, Some(rel_tol), Some(abs_tol), Some(core::format_args!($($arg)+)),
-                    );
-                }
+                $crate::macros::assert_is_close(lhs, rhs, core::format_args!(": {}", core::format_args!($($arg)+)))
             }
         }
     };
@@ -226,20 +217,20 @@ mod tests {
 
     #[test]
     fn assert_is_close_rel_tol() {
-        assert_is_close_rel_tol!(1.0, 1.0 + 1e-2, 1e-1);
-        assert_is_close_rel_tol!(&1.0, 1.0 + 1e-2, 1e-1);
-        assert_is_close_rel_tol!(1.0, &(1.0 + 1e-2), 1e-1);
-        assert_is_close_rel_tol!(&1.0, &(1.0 + 1e-2), 1e-1);
-        assert_is_close_rel_tol!(1.0, 1.0 + 1e-2, &1e-1);
-        assert_is_close_rel_tol!(&1.0, 1.0 + 1e-2, &1e-1);
-        assert_is_close_rel_tol!(1.0, &(1.0 + 1e-2), &1e-1);
-        assert_is_close_rel_tol!(&1.0, &(1.0 + 1e-2), &1e-1);
+        assert_is_close!(1.0, 1.0 + 1e-2, rel_tol = 1e-1);
+        assert_is_close!(&1.0, 1.0 + 1e-2, rel_tol = 1e-1);
+        assert_is_close!(1.0, &(1.0 + 1e-2), rel_tol = 1e-1);
+        assert_is_close!(&1.0, &(1.0 + 1e-2), rel_tol = 1e-1);
+        assert_is_close!(1.0, 1.0 + 1e-2, rel_tol = &1e-1);
+        assert_is_close!(&1.0, 1.0 + 1e-2, rel_tol = &1e-1);
+        assert_is_close!(1.0, &(1.0 + 1e-2), rel_tol = &1e-1);
+        assert_is_close!(&1.0, &(1.0 + 1e-2), rel_tol = &1e-1);
     }
 
     #[test]
     fn assert_is_close_rel_tol_error() {
         let err =
-            std::panic::catch_unwind(|| assert_is_close_rel_tol!(1e-2_f32, 1e-2 + 1e-2, 1e-1))
+            std::panic::catch_unwind(|| assert_is_close!(1e-2_f32, 1e-2 + 1e-2, rel_tol = 1e-1))
                 .unwrap_err();
         let msg: &String = err.downcast_ref().unwrap();
 
@@ -253,7 +244,7 @@ mod tests {
         );
 
         let err = std::panic::catch_unwind(|| {
-            assert_is_close_rel_tol!(1e-2_f32, 1e-2 + 1e-2, 1e-1, "{:?}", 2.0);
+            assert_is_close!(1e-2_f32, 1e-2 + 1e-2, rel_tol = 1e-1, "{:?}", 2.0);
         })
         .unwrap_err();
         let msg: &String = err.downcast_ref().unwrap();
@@ -270,19 +261,19 @@ mod tests {
 
     #[test]
     fn assert_is_close_abs_tol() {
-        assert_is_close_abs_tol!(1e-2, 1e-2 + 1e-2, 1e-1);
-        assert_is_close_abs_tol!(&1e-2, 1e-2 + 1e-2, 1e-1);
-        assert_is_close_abs_tol!(1e-2, &(1e-2 + 1e-2), 1e-1);
-        assert_is_close_abs_tol!(&1e-2, &(1e-2 + 1e-2), 1e-1);
-        assert_is_close_abs_tol!(1e-2, 1e-2 + 1e-2, &1e-1);
-        assert_is_close_abs_tol!(&1e-2, 1e-2 + 1e-2, &1e-1);
-        assert_is_close_abs_tol!(1e-2, &(1e-2 + 1e-2), &1e-1);
-        assert_is_close_abs_tol!(&1e-2, &(1e-2 + 1e-2), &1e-1);
+        assert_is_close!(1e-2, 1e-2 + 1e-2, abs_tol = 1e-1);
+        assert_is_close!(&1e-2, 1e-2 + 1e-2, abs_tol = 1e-1);
+        assert_is_close!(1e-2, &(1e-2 + 1e-2), abs_tol = 1e-1);
+        assert_is_close!(&1e-2, &(1e-2 + 1e-2), abs_tol = 1e-1);
+        assert_is_close!(1e-2, 1e-2 + 1e-2, abs_tol = &1e-1);
+        assert_is_close!(&1e-2, 1e-2 + 1e-2, abs_tol = &1e-1);
+        assert_is_close!(1e-2, &(1e-2 + 1e-2), abs_tol = &1e-1);
+        assert_is_close!(&1e-2, &(1e-2 + 1e-2), abs_tol = &1e-1);
     }
 
     #[test]
     fn assert_is_close_abs_tol_error() {
-        let err = std::panic::catch_unwind(|| assert_is_close_abs_tol!(1.0_f32, 1.0 + 1.0, 1e-1))
+        let err = std::panic::catch_unwind(|| assert_is_close!(1.0_f32, 1.0 + 1.0, abs_tol = 1e-1))
             .unwrap_err();
         let msg: &String = err.downcast_ref().unwrap();
 
@@ -296,7 +287,7 @@ mod tests {
         );
 
         let err = std::panic::catch_unwind(|| {
-            assert_is_close_abs_tol!(1.0_f32, 1.0 + 1.0, 1e-1, "{}", false);
+            assert_is_close!(1.0_f32, 1.0 + 1.0, abs_tol = 1e-1, "{}", false);
         })
         .unwrap_err();
         let msg: &String = err.downcast_ref().unwrap();
@@ -313,27 +304,44 @@ mod tests {
 
     #[test]
     fn assert_is_close_tol() {
-        assert_is_close_tol!(PI, 22.0 / 7.0, 1e-2, 1e-2);
-        assert_is_close_tol!(&PI, 22.0 / 7.0, 1e-2, 1e-2);
-        assert_is_close_tol!(PI, &(22.0 / 7.0), 1e-2, 1e-2);
-        assert_is_close_tol!(&PI, &(22.0 / 7.0), 1e-2, 1e-2);
-        assert_is_close_tol!(PI, 22.0 / 7.0, &1e-2, 1e-2);
-        assert_is_close_tol!(&PI, 22.0 / 7.0, &1e-2, 1e-2);
-        assert_is_close_tol!(PI, &(22.0 / 7.0), &1e-2, 1e-2);
-        assert_is_close_tol!(&PI, &(22.0 / 7.0), &1e-2, 1e-2);
-        assert_is_close_tol!(PI, 22.0 / 7.0, 1e-2, &1e-2);
-        assert_is_close_tol!(&PI, 22.0 / 7.0, 1e-2, &1e-2);
-        assert_is_close_tol!(PI, &(22.0 / 7.0), 1e-2, &1e-2);
-        assert_is_close_tol!(&PI, &(22.0 / 7.0), 1e-2, &1e-2);
-        assert_is_close_tol!(PI, 22.0 / 7.0, &1e-2, &1e-2);
-        assert_is_close_tol!(&PI, 22.0 / 7.0, &1e-2, &1e-2);
-        assert_is_close_tol!(PI, &(22.0 / 7.0), &1e-2, &1e-2);
-        assert_is_close_tol!(&PI, &(22.0 / 7.0), &1e-2, &1e-2);
+        assert_is_close!(PI, 22.0 / 7.0, rel_tol = 1e-2, abs_tol = 1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, rel_tol = 1e-2, abs_tol = 1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), rel_tol = 1e-2, abs_tol = 1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), rel_tol = 1e-2, abs_tol = 1e-2);
+        assert_is_close!(PI, 22.0 / 7.0, rel_tol = &1e-2, abs_tol = 1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, rel_tol = &1e-2, abs_tol = 1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), rel_tol = &1e-2, abs_tol = 1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), rel_tol = &1e-2, abs_tol = 1e-2);
+        assert_is_close!(PI, 22.0 / 7.0, rel_tol = 1e-2, abs_tol = &1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, rel_tol = 1e-2, abs_tol = &1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), rel_tol = 1e-2, abs_tol = &1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), rel_tol = 1e-2, abs_tol = &1e-2);
+        assert_is_close!(PI, 22.0 / 7.0, rel_tol = &1e-2, abs_tol = &1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, rel_tol = &1e-2, abs_tol = &1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), rel_tol = &1e-2, abs_tol = &1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), rel_tol = &1e-2, abs_tol = &1e-2);
+
+        assert_is_close!(PI, 22.0 / 7.0, abs_tol = 1e-2, rel_tol = 1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, abs_tol = 1e-2, rel_tol = 1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), abs_tol = 1e-2, rel_tol = 1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), abs_tol = 1e-2, rel_tol = 1e-2);
+        assert_is_close!(PI, 22.0 / 7.0, abs_tol = 1e-2, rel_tol = &1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, abs_tol = 1e-2, rel_tol = &1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), abs_tol = 1e-2, rel_tol = &1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), abs_tol = 1e-2, rel_tol = &1e-2);
+        assert_is_close!(PI, 22.0 / 7.0, abs_tol = &1e-2, rel_tol = 1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, abs_tol = &1e-2, rel_tol = 1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), abs_tol = &1e-2, rel_tol = 1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), abs_tol = &1e-2, rel_tol = 1e-2);
+        assert_is_close!(PI, 22.0 / 7.0, abs_tol = &1e-2, rel_tol = &1e-2);
+        assert_is_close!(&PI, 22.0 / 7.0, abs_tol = &1e-2, rel_tol = &1e-2);
+        assert_is_close!(PI, &(22.0 / 7.0), abs_tol = &1e-2, rel_tol = &1e-2);
+        assert_is_close!(&PI, &(22.0 / 7.0), abs_tol = &1e-2, rel_tol = &1e-2);
     }
 
     #[test]
     fn assert_is_close_tol_error() {
-        let err = std::panic::catch_unwind(|| assert_is_close_tol!(PI, 22.0 / 7.0, 1e-6, 1e-6))
+        let err = std::panic::catch_unwind(|| assert_is_close!(PI, 22.0 / 7.0, rel_tol = 1e-6, abs_tol = 1e-6))
             .unwrap_err();
         let msg: &String = err.downcast_ref().unwrap();
 
@@ -350,7 +358,7 @@ mod tests {
         );
 
         let err = std::panic::catch_unwind(|| {
-            assert_is_close_tol!(PI, 22.0 / 7.0, 1e-6, 1e-6, "{:?}", Option::<()>::None);
+            assert_is_close!(PI, 22.0 / 7.0, rel_tol = 1e-6, abs_tol = 1e-6, "{:?}", Option::<()>::None);
         })
         .unwrap_err();
         let msg: &String = err.downcast_ref().unwrap();
