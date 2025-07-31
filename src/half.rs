@@ -33,7 +33,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn f16_is_close_impl() {
+    fn f16_is_close_tol() {
         use half::f16;
         assert!((f16::from_f32(0.1) + f16::from_f32(0.2)).is_close(&f16::from_f32(0.3)));
         assert!(!(f16::from_f32(0.1) + f16::from_f32(0.2)).is_close_tol(
@@ -44,7 +44,7 @@ mod tests {
     }
 
     #[test]
-    fn bf16_is_close_impl() {
+    fn bf16_is_close_tol() {
         use half::bf16;
         assert!((bf16::from_f32(0.3) + bf16::EPSILON).is_close(&bf16::from_f32(0.3)));
         assert!(!(bf16::from_f32(0.3) + bf16::EPSILON).is_close_tol(

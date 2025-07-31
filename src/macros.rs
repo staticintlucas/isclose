@@ -182,37 +182,23 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed
+    left: 2.0
+   right: 3.0
+ rel tol: 1e-6
+ abs tol: 1e-6")]
     fn assert_is_close_error() {
-        let err = std::panic::catch_unwind(|| assert_is_close!(2.0_f32, 3.0)).unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
+        assert_is_close!(2.0_f32, 3.0);
+    }
 
-        assert_eq!(
-            msg,
-            &format!(
-                "assertion `left ~= right` failed
+    #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed: message
     left: 2.0
    right: 3.0
- rel tol: {0:?}
- abs tol: {0:?}",
-                1e-6
-            ) // Rust <=1.57 formats this differently, so we need to use format!()
-        );
-
-        let err =
-            std::panic::catch_unwind(|| assert_is_close!(2.0_f32, 3.0, "message")).unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
-
-        assert_eq!(
-            msg,
-            &format!(
-                "assertion `left ~= right` failed: message
-    left: 2.0
-   right: 3.0
- rel tol: {0:?}
- abs tol: {0:?}",
-                1e-6
-            ) // Rust <=1.57 formats this differently, so we need to use format!()
-        );
+ rel tol: 1e-6
+ abs tol: 1e-6")]
+    fn assert_is_close_error_message() {
+        assert_is_close!(2.0_f32, 3.0, "message");
     }
 
     #[test]
@@ -228,35 +214,23 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed
+    left: 0.01
+   right: 0.02
+ rel tol: 0.1
+ abs tol: 0.0")]
     fn assert_is_close_rel_tol_error() {
-        let err =
-            std::panic::catch_unwind(|| assert_is_close!(1e-2_f32, 1e-2 + 1e-2, rel_tol = 1e-1))
-                .unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
+        assert_is_close!(1e-2_f32, 1e-2 + 1e-2, rel_tol = 1e-1);
+    }
 
-        assert_eq!(
-            msg,
-            "assertion `left ~= right` failed
+    #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed: 2.0
     left: 0.01
    right: 0.02
  rel tol: 0.1
- abs tol: 0.0"
-        );
-
-        let err = std::panic::catch_unwind(|| {
-            assert_is_close!(1e-2_f32, 1e-2 + 1e-2, rel_tol = 1e-1, "{:?}", 2.0);
-        })
-        .unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
-
-        assert_eq!(
-            msg,
-            "assertion `left ~= right` failed: 2.0
-    left: 0.01
-   right: 0.02
- rel tol: 0.1
- abs tol: 0.0"
-        );
+ abs tol: 0.0")]
+    fn assert_is_close_rel_tol_error_message() {
+        assert_is_close!(1e-2_f32, 1e-2 + 1e-2, rel_tol = 1e-1, "{:?}", 2.0);
     }
 
     #[test]
@@ -272,34 +246,23 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed
+    left: 1.0
+   right: 2.0
+ rel tol: 0.0
+ abs tol: 0.1")]
     fn assert_is_close_abs_tol_error() {
-        let err = std::panic::catch_unwind(|| assert_is_close!(1.0_f32, 1.0 + 1.0, abs_tol = 1e-1))
-            .unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
+        assert_is_close!(1.0_f32, 1.0 + 1.0, abs_tol = 1e-1);
+    }
 
-        assert_eq!(
-            msg,
-            "assertion `left ~= right` failed
+    #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed: false
     left: 1.0
    right: 2.0
  rel tol: 0.0
- abs tol: 0.1"
-        );
-
-        let err = std::panic::catch_unwind(|| {
-            assert_is_close!(1.0_f32, 1.0 + 1.0, abs_tol = 1e-1, "{}", false);
-        })
-        .unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
-
-        assert_eq!(
-            msg,
-            "assertion `left ~= right` failed: false
-    left: 1.0
-   right: 2.0
- rel tol: 0.0
- abs tol: 0.1"
-        );
+ abs tol: 0.1")]
+    fn assert_is_close_abs_tol_error_message() {
+        assert_is_close!(1.0_f32, 1.0 + 1.0, abs_tol = 1e-1, "{}", false);
     }
 
     #[test]
@@ -340,39 +303,29 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed
+    left: 3.1415927
+   right: 3.142857
+ rel tol: 1e-6
+ abs tol: 1e-6")]
     fn assert_is_close_tol_error() {
-        let err = std::panic::catch_unwind(|| assert_is_close!(PI, 22.0 / 7.0, rel_tol = 1e-6, abs_tol = 1e-6))
-            .unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
+        assert_is_close!(PI, 22.0 / 7.0, rel_tol = 1e-6, abs_tol = 1e-6);
+    }
 
-        assert_eq!(
-            msg,
-            &format!(
-                "assertion `left ~= right` failed
+    #[test]
+    #[should_panic(expected = "assertion `left ~= right` failed: None
     left: 3.1415927
    right: 3.142857
- rel tol: {0:?}
- abs tol: {0:?}",
-                1e-6
-            ) // Rust <=1.57 formats this differently, so we need to use format!()
-        );
-
-        let err = std::panic::catch_unwind(|| {
-            assert_is_close!(PI, 22.0 / 7.0, rel_tol = 1e-6, abs_tol = 1e-6, "{:?}", Option::<()>::None);
-        })
-        .unwrap_err();
-        let msg: &String = err.downcast_ref().unwrap();
-
-        assert_eq!(
-            msg,
-            &format!(
-                "assertion `left ~= right` failed: None
-    left: 3.1415927
-   right: 3.142857
- rel tol: {0:?}
- abs tol: {0:?}",
-                1e-6
-            ) // Rust <=1.57 formats this differently, so we need to use format!()
+ rel tol: 1e-6
+ abs tol: 1e-6")]
+    fn assert_is_close_tol_error_message() {
+        assert_is_close!(
+            PI,
+            22.0 / 7.0,
+            rel_tol = 1e-6,
+            abs_tol = 1e-6,
+            "{:?}",
+            Option::<()>::None,
         );
     }
 }
