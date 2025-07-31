@@ -2,7 +2,7 @@
 name = "isclose"
 version = "0.2.0"
 authors = ["Lucas Jansen"]
-edition = "2018"
+edition = "2021"
 rust-version = "1.60"
 description = "A collection of trait and macros for comparing approximate equality"
 repository = "https://github.com/staticintlucas/isclose"
