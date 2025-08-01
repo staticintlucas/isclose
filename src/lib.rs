@@ -398,27 +398,60 @@ mod tests {
         assert!(!<&f32 as IsClose<f32>>::is_close(&&PI_F32, &(22.0 / 7.0)));
 
         let mut pi_f32 = PI_F32;
-        assert!(<&mut f32 as IsClose<f32>>::is_close(&&mut pi_f32, &(355.0 / 113.0)));
-        assert!(!<&mut f32 as IsClose<f32>>::is_close(&&mut pi_f32, &(22.0 / 7.0)));
+        assert!(<&mut f32 as IsClose<f32>>::is_close(
+            &&mut pi_f32,
+            &(355.0 / 113.0)
+        ));
+        assert!(!<&mut f32 as IsClose<f32>>::is_close(
+            &&mut pi_f32,
+            &(22.0 / 7.0)
+        ));
 
         assert!(<f32 as IsClose<&f32>>::is_close(&PI_F32, &&(355.0 / 113.0)));
         assert!(!<f32 as IsClose<&f32>>::is_close(&PI_F32, &&(22.0 / 7.0)));
 
-        assert!(<f32 as IsClose<&mut f32>>::is_close(&PI_F32, &&mut (355.0 / 113.0)));
-        assert!(!<f32 as IsClose<&mut f32>>::is_close(&PI_F32, &&mut (22.0 / 7.0)));
+        assert!(<f32 as IsClose<&mut f32>>::is_close(
+            &PI_F32,
+            &&mut (355.0 / 113.0)
+        ));
+        assert!(!<f32 as IsClose<&mut f32>>::is_close(
+            &PI_F32,
+            &&mut (22.0 / 7.0)
+        ));
 
-        assert!(<&f32 as IsClose<&f32>>::is_close(&&PI_F32, &&(355.0 / 113.0)));
+        assert!(<&f32 as IsClose<&f32>>::is_close(
+            &&PI_F32,
+            &&(355.0 / 113.0)
+        ));
         assert!(!<&f32 as IsClose<&f32>>::is_close(&&PI_F32, &&(22.0 / 7.0)));
 
         let mut pi_f32 = PI_F32;
-        assert!(<&mut f32 as IsClose<&f32>>::is_close(&&mut pi_f32, &&(355.0 / 113.0)));
-        assert!(!<&mut f32 as IsClose<&f32>>::is_close(&&mut pi_f32, &&(22.0 / 7.0)));
+        assert!(<&mut f32 as IsClose<&f32>>::is_close(
+            &&mut pi_f32,
+            &&(355.0 / 113.0)
+        ));
+        assert!(!<&mut f32 as IsClose<&f32>>::is_close(
+            &&mut pi_f32,
+            &&(22.0 / 7.0)
+        ));
 
-        assert!(<&f32 as IsClose<&mut f32>>::is_close(&&PI_F32, &&mut (355.0 / 113.0)));
-        assert!(!<&f32 as IsClose<&mut f32>>::is_close(&&PI_F32, &&mut (22.0 / 7.0)));
+        assert!(<&f32 as IsClose<&mut f32>>::is_close(
+            &&PI_F32,
+            &&mut (355.0 / 113.0)
+        ));
+        assert!(!<&f32 as IsClose<&mut f32>>::is_close(
+            &&PI_F32,
+            &&mut (22.0 / 7.0)
+        ));
 
         let mut pi_f32 = PI_F32;
-        assert!(<&mut f32 as IsClose<&mut f32>>::is_close(&&mut pi_f32, &&mut (355.0 / 113.0)));
-        assert!(!<&mut f32 as IsClose<&mut f32>>::is_close(&&mut pi_f32, &&mut (22.0 / 7.0)));
+        assert!(<&mut f32 as IsClose<&mut f32>>::is_close(
+            &&mut pi_f32,
+            &&mut (355.0 / 113.0)
+        ));
+        assert!(!<&mut f32 as IsClose<&mut f32>>::is_close(
+            &&mut pi_f32,
+            &&mut (22.0 / 7.0)
+        ));
     }
 }

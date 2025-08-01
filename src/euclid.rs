@@ -146,8 +146,7 @@ where
 
     #[inline]
     fn is_close_tol(&self, rhs: &Self, rel_tol: &T, abs_tol: &T) -> bool {
-        self.rotation
-            .is_close_tol(&rhs.rotation, rel_tol, abs_tol)
+        self.rotation.is_close_tol(&rhs.rotation, rel_tol, abs_tol)
             && self
                 .translation
                 .is_close_tol(&rhs.translation, rel_tol, abs_tol)
